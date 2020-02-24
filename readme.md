@@ -1,6 +1,11 @@
 # Protect Joe
 A tower defense game and minimal game engine written in Rust!
 
+## Game play: 
+The object of the game is to protect our main character Joe. You are playing as Joe's immune system in an attempt to prevent the viruses, bacterias, fungus, and other dangerous outside forces from getting to Joe's heart. 
+
+Some ideas are to add real time elements to the game as well during the rounds to stop stab wounds and bullets. 
+
 ## Libraries used: 
 - https://github.com/brendanzab/gl-rs/tree/master/gl_generator
 - https://github.com/image-rs/image-png
