@@ -4,6 +4,7 @@ extern crate sdl2;
 pub mod render_gl;
 
 fn main() {
+    //a comment for example
     let sdl = sdl2::init().unwrap();
     let video_subsystem = sdl.video().unwrap();
 
