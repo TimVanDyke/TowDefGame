@@ -7,17 +7,20 @@ The object of the game is to protect our main character Joe. You are playing as 
 Some ideas are to add real time elements to the game as well during the rounds to stop stab wounds and bullets. 
 
 ## Dependencies: 
-- cmake needs to be installed for sdl2 (https://cmake.org/download/)
+- __cmake needs to be installed for sdl2 (https://cmake.org/download/)__ I ended up not going this path and used GLFW instead which did not require external dependencies on the system. 
 
 ## Libraries used: 
-- https://github.com/brendanzab/gl-rs/tree/master/gl_generator
-- https://github.com/image-rs/image-png
-- https://github.com/redox-os/rusttype
-- https://github.com/Rust-SDL2/rust-sdl2
-- https://github.com/rustgd/cgmath
+- https://github.com/PistonDevelopers/glfw-rs (GLFW bindings and other window creation things)
+- https://github.com/image-rs/image-png (handling png things)
+- https://github.com/redox-os/rusttype (for fonts and typing to the screen)
+- https://github.com/rustgd/cgmath (for game vector math)
+- __https://github.com/Rust-SDL2/rust-sdl2__ (ended up not going this route)
+- __https://github.com/brendanzab/gl-rs/tree/master/gl_generator__ (ended up not going this route)
+
 
 ## References for helping me understand concepts: 
 - https://www.rust-lang.org/ (official rust documentation)
 - https://doc.rust-lang.org/stable/book/title-page.html (Official FREE Rust textbook)
 - https://michaelfairley.com/blog/i-made-a-game-in-rust/ (Helped me build a list of libraries to use)
-- http://nercury.github.io/rust/opengl/tutorial/2018/02/08/opengl-in-rust-from-scratch-01-window.html (Another resource I found for a simple hello world build a window in Rust)
+- http://nercury.github.io/rust/opengl/tutorial/2018/02/08/opengl-in-rust-from-scratch-01-window.html (Another resource I found for helping me get started, decided not to go this path)
+- once I pulled all the dependencies I was able to run ```cargo doc --open``` which built all the docs in a searchable offline html format which was inva
