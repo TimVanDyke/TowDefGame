@@ -5,6 +5,7 @@ pub mod render_gl;
 
 fn main() {
     //a comment for example
+    //a branch example
     let sdl = sdl2::init().unwrap();
     let video_subsystem = sdl.video().unwrap();
 
