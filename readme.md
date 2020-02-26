@@ -7,15 +7,15 @@ The object of the game is to protect our main character Joe. You are playing as 
 Some ideas are to add real time elements to the game as well during the rounds to stop stab wounds and bullets. 
 
 ## Dependencies: 
-- __cmake needs to be installed for sdl2 (https://cmake.org/download/)__ I ended up not going this path and used GLFW instead which did not require external dependencies on the system. 
+- ~~cmake needs to be installed for sdl2 (https://cmake.org/download/)~~ I ended up not going this path and used GLFW instead which did not require external dependencies on the system. 
 
 ## Libraries used: 
 - https://github.com/PistonDevelopers/glfw-rs (GLFW bindings and other window creation things)
 - https://github.com/image-rs/image-png (handling png things)
 - https://github.com/redox-os/rusttype (for fonts and typing to the screen)
 - https://github.com/rustgd/cgmath (for game vector math)
-- __https://github.com/Rust-SDL2/rust-sdl2__ (ended up not going this route)
-- __https://github.com/brendanzab/gl-rs/tree/master/gl_generator__ (ended up not going this route)
+- ~~https://github.com/Rust-SDL2/rust-sdl2~~ (ended up not going this route)
+- ~~https://github.com/brendanzab/gl-rs/tree/master/gl_generator~~ (ended up not going this route)
 
 
 ## References for helping me understand concepts: 
