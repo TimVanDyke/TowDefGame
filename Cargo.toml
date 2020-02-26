@@ -11,5 +11,6 @@ gl_generator = "0.14.0"
 gl = "0.14.0"
 png = "0.15.3"
 rusttype = "0.8.2"
+# sdl2 = "0.33.0"
 sdl2 = { version = "0.33.0", features = ["bundled", "static-link"] }
 cgmath = "0.17.0"
