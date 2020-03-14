@@ -5,8 +5,8 @@ use std::time::{Duration, SystemTime};
 
 pub fn main() {
     // fps Calc and Game Clock
-    const FPS: u8 = 60;
-    const NANOS: f64 = 1_000_000_000.0 / FPS as f64;
+    const UPDATES: u8 = 60;
+    const NANOS: f64 = 1_000_000_000.0 / UPDATES as f64;
     let mut time_now: SystemTime;
     let mut timer = SystemTime::now();
     let mut last_time = SystemTime::now();
@@ -15,6 +15,7 @@ pub fn main() {
     let mut fps_count = 0;
     let mut update_count = 0;
 
+    let mut running = true;
     // sdl setup and window setup
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
@@ -37,44 +38,19 @@ pub fn main() {
     }
 
     // game loop
-    'main: loop {
+    while running {
         // fps and update timer goes here
         time_now = SystemTime::now();
         delta += time_now.duration_since(last_time).unwrap().as_nanos() as f64 / NANOS;
         last_time = time_now;
+        // capping updates to "UPDATES"
         while delta > 1.0 {
-            for event in event_pump.poll_iter() {
-                println!("{:?}", event);
-                match event {
-                    Event::Quit { .. }
-                    | Event::KeyDown {
-                        keycode: Some(Keycode::Escape),
-                        ..
-                    } => break 'main,
-                    _ => {}
-                }
-            }
-            unsafe {
-                gl::Clear(gl::COLOR_BUFFER_BIT);
-            }
-            window.gl_swap_window();
-            //manually updating and rendering end
-            update(); // capping updates
-            update_count += 1;
-            render(); // capping fps
-            fps_count += 1;
-
-            //tick the clock once (probably should go in update)
-            clock += 1;
-            if clock >= FPS {
-                clock = 0;
-            }
+            running = handle_events(&mut event_pump, &mut update_count, &mut clock, UPDATES);
+            render(&mut window, &mut fps_count);
             delta -= 1.0;
-        }
-        // update();            // uncapping updates
-        // update_counter += 1;
-        // render();            // uncapping fps
-        // fps_counter += 1;
+        } // uncapping updates and fps is below:
+          // running = handle_events(&mut event_pump, &mut update_count, &mut clock, UPDATES);
+          // render(&mut window, &mut fps_count);
         build_title_update_fps(
             &mut timer,
             &mut window,
@@ -85,8 +61,39 @@ pub fn main() {
     }
 }
 
-fn update() {}
-fn render() {}
+fn handle_events(
+    pump: &mut sdl2::EventPump,
+    updt_cnt: &mut i32,
+    clk: &mut u8,
+    updates: u8,
+) -> bool {
+    for event in pump.poll_iter() {
+        println!("{:?}", event);
+        match event {
+            Event::Quit { .. }
+            | Event::KeyDown {
+                keycode: Some(Keycode::Escape),
+                ..
+            } => return false,
+            _ => {}
+        }
+    }
+    // tick the clock once
+    *clk += 1;
+    if *clk >= updates {
+        *clk = 0;
+    }
+    *updt_cnt += 1;
+    true
+}
+
+fn render(window: &mut sdl2::video::Window, fps_cnt: &mut i32) {
+    unsafe {
+        gl::Clear(gl::COLOR_BUFFER_BIT);
+    }
+    window.gl_swap_window();
+    *fps_cnt += 1;
+}
 
 /// A helper method to build the title for the window so that it doesn't look like garbage in my loop
 fn build_title_update_fps(
