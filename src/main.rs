@@ -3,6 +3,8 @@ use sdl2::keyboard::Keycode;
 
 use std::time::{Duration, SystemTime};
 
+/// Initialized variables and begins the game loop.
+/// It also calls the helper methods within the loop to keep the loop clean.
 pub fn main() {
     // fps Calc and Game Clock
     const UPDATES: u8 = 60;
@@ -31,10 +33,10 @@ pub fn main() {
 
     // graphics context and opengl setup
     let _gl_context = window.gl_create_context().unwrap();
-    let _gl =
-        gl::load_with(|s| video_subsystem.gl_get_proc_address(s) as *const std::os::raw::c_void);
+    // let _gl =
+    //     gl::load_with(|s| video_subsystem.gl_get_proc_address(s) as *const std::os::raw::c_void);
     unsafe {
-        gl::ClearColor(0.3, 0.3, 0.5, 1.0);
+        // gl::ClearColor(0.3, 0.3, 0.5, 1.0);
     }
 
     // game loop
@@ -61,6 +63,7 @@ pub fn main() {
     }
 }
 
+/// handles user input and events, then updates the world based on those things
 fn handle_events(
     pump: &mut sdl2::EventPump,
     updt_cnt: &mut i32,
@@ -87,9 +90,10 @@ fn handle_events(
     true
 }
 
+/// renders the world to handle what happened in handle_events
 fn render(window: &mut sdl2::video::Window, fps_cnt: &mut i32) {
     unsafe {
-        gl::Clear(gl::COLOR_BUFFER_BIT);
+        // gl::Clear(gl::COLOR_BUFFER_BIT);
     }
     window.gl_swap_window();
     *fps_cnt += 1;
