@@ -22,5 +22,6 @@ Some ideas are to add real time elements to the game as well during the rounds t
 - https://www.rust-lang.org/ (official rust documentation)
 - https://doc.rust-lang.org/stable/book/title-page.html (Official FREE Rust textbook)
 - https://michaelfairley.com/blog/i-made-a-game-in-rust/ (Helped me build a list of libraries to use)
-- http://nercury.github.io/rust/opengl/tutorial/2018/02/08/opengl-in-rust-from-scratch-01-window.html (Another resource I found for helping me get started, decided not to go this path)
-- once I pulled all the dependencies I was able to run ```cargo doc --open``` which built all the docs in a searchable offline html format which was inva
+- https://www.youtube.com/playlist?list=PLlrATfBNZ98foTJPJ_Ev03o2oq3-GGOS2 (What ultimately taught me OpenGL. I cannot recommend this tutorial or channel enough.)
+- http://nercury.github.io/rust/opengl/tutorial/2018/02/08/opengl-in-rust-from-scratch-01-window.html (Another resource I found for helping me get started, ~~decided not to go this path~~ This was invaluable and incredibly elegant and I ended up using much of this guy's suggestions for how to handle OpenGL in Rust)
+- once I pulled all the dependencies I was able to run ```cargo doc --open``` which built all the docs in a searchable offline html format which was very helpful for learning how the API's worked
