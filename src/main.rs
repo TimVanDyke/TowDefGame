@@ -17,6 +17,10 @@ use sdl2::keyboard::Keycode;
 use std::path::Path;
 use std::time::{Duration, SystemTime};
 
+trait Render {
+    fn render(&self, gl: &gl::Gl);
+}
+
 fn main() {
     if let Err(e) = run() {
         println!("{}", debug::failure_to_string(e));
@@ -66,7 +70,8 @@ fn run() -> Result<(), failure::Error> {
     let sqr = square::Square::new(&res, &gl)?;
     let tri1 = triangle::Tri1::new(&res, &gl)?;
     let tri2 = triangle::Tri2::new(&res, &gl)?;
-    let drawables = vec![sqr];
+    let drawables: Vec<&dyn Render> = vec![&tri1, &tri2, &sqr];
+    // let drawables = vec![sqr];
     // set up shared state for window
     viewport.set_used(&gl);
     color_buffer.set_used(&gl);
@@ -128,11 +133,11 @@ fn handle_events(
 /// renders the world to handle what happened in handle_events
 fn render(
     window: &mut sdl2::video::Window,
-    drawables: &Vec<square::Square>,
+    drawables: &Vec<&dyn Render>,
     fps_cnt: &mut i32,
     gl: &gl::Gl,
 ) {
-    for drawable in drawables {
+    for drawable in drawables.iter() {
         drawable.render(&gl);
     }
     window.gl_swap_window();

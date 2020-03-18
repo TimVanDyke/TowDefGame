@@ -2,6 +2,7 @@ use crate::render_gl::{self, buffer, data};
 use crate::resources::Resources;
 use failure;
 use gl;
+use crate::Render;
 
 #[derive(VertexAttribPointers, Copy, Clone, Debug)]
 #[repr(C, packed)]
@@ -75,8 +76,10 @@ impl Square {
             vao,
         })
     }
+}
 
-    pub fn render(&self, gl: &gl::Gl) {
+impl Render for Square {
+    fn render(&self, gl: &gl::Gl) {
         self.program.set_used();
         self.vao.bind();
 

@@ -2,6 +2,7 @@ use crate::render_gl::{self, buffer, data};
 use crate::resources::Resources;
 use failure;
 use gl;
+use crate::Render;
 
 #[derive(VertexAttribPointers, Copy, Clone, Debug)]
 #[repr(C, packed)]
@@ -68,19 +69,6 @@ impl Tri1 {
             vao,
         })
     }
-
-    pub fn render(&self, gl: &gl::Gl) {
-        self.program.set_used();
-        self.vao.bind();
-
-        unsafe {
-            gl.DrawArrays(
-                gl::TRIANGLES, // mode
-                0,             // starting index in the enabled arrays
-                3,             // number of indices to be rendered
-            );
-        }
-    }
 }
 
 impl Tri2 {
@@ -127,8 +115,24 @@ impl Tri2 {
             vao,
         })
     }
+}
+impl Render for Tri1 {
+    fn render(&self, gl: &gl::Gl) {
+        self.program.set_used();
+        self.vao.bind();
 
-    pub fn render(&self, gl: &gl::Gl) {
+        unsafe {
+            gl.DrawArrays(
+                gl::TRIANGLES, // mode
+                0,             // starting index in the enabled arrays
+                3,             // number of indices to be rendered
+            );
+        }
+        self.vao.unbind();
+    }
+}
+impl Render for Tri2 {
+    fn render(&self, gl: &gl::Gl) {
         self.program.set_used();
         self.vao.bind();
 
