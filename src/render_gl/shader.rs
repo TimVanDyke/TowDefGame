@@ -1,5 +1,5 @@
-use crate::resources::{self, Resources};
 use gl;
+use crate::resources::{self, Resources};
 use std;
 use std::ffi::{CStr, CString};
 
@@ -11,7 +11,10 @@ pub enum Error {
         #[cause]
         inner: resources::Error,
     },
-    #[fail(display = "Can not determine shader type for resource {}", name)]
+    #[fail(
+        display = "Can not determine shader type for resource {}",
+        name
+    )]
     CanNotDetermineShaderTypeForResource { name: String },
     #[fail(display = "Failed to compile shader {}: {}", name, message)]
     CompileError { name: String, message: String },

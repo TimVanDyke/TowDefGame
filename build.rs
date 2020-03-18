@@ -1,3 +1,5 @@
+extern crate walkdir;
+
 use std::env;
 use std::fs::{self, DirBuilder};
 use std::path::{Path, PathBuf};
@@ -6,9 +8,13 @@ use walkdir::WalkDir;
 fn main() {
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
     let manifest_dir = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
+
+    // locate executable path even if the project is in workspace
+
     let executable_path = locate_target_dir_from_output_dir(&out_dir)
         .expect("failed to find target dir")
         .join(env::var("PROFILE").unwrap());
+
     copy(
         &manifest_dir.join("res"),
         &executable_path.join("res"),
@@ -17,10 +23,12 @@ fn main() {
 
 fn locate_target_dir_from_output_dir(mut target_dir_search: &Path) -> Option<&Path> {
     loop {
+        // if path ends with "target", we assume this is correct dir
         if target_dir_search.ends_with("target") {
             return Some(target_dir_search);
         }
 
+        // otherwise, keep going up in tree until we find "target" dir
         target_dir_search = match target_dir_search.parent() {
             Some(path) => path,
             None => break,
