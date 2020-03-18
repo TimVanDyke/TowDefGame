@@ -57,26 +57,19 @@ fn run() -> Result<(), failure::Error> {
         .resizable()
         .build()?;
 
-    let mut i = 0;
     let _gl_context = window.gl_create_context().map_err(err_msg)?;
     let gl = gl::Gl::load_with(|s| {
         video_subsystem.gl_get_proc_address(s) as *const std::os::raw::c_void
     });
-
-    let mut viewport = render_gl::Viewport::for_window(900, 700);
+    let viewport = render_gl::Viewport::for_window(900, 700);
     let color_buffer = render_gl::ColorBuffer::from_color(na::Vector3::new(0.3, 0.3, 0.5));
     let sqr = square::Square::new(&res, &gl)?;
     let tri1 = triangle::Tri1::new(&res, &gl)?;
     let tri2 = triangle::Tri2::new(&res, &gl)?;
     let drawables = vec![sqr];
-
     // set up shared state for window
-
     viewport.set_used(&gl);
     color_buffer.set_used(&gl);
-
-    // main loop
-
     let mut event_pump = sdl.event_pump().map_err(err_msg)?;
     // game loop
     while running {
@@ -87,6 +80,8 @@ fn run() -> Result<(), failure::Error> {
         // capping updates to "UPDATES"
         while delta > 1.0 {
             running = handle_events(&mut event_pump, &mut update_count, &mut clock, UPDATES);
+            tri1.render(&gl);
+            tri2.render(&gl);
             render(&mut window, &drawables, &mut fps_count, &gl);
             delta -= 1.0;
         } // uncapping updates and fps is below:
