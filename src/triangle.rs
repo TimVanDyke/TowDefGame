@@ -1,8 +1,8 @@
 use crate::render_gl::{self, buffer, data};
 use crate::resources::Resources;
+use crate::Render;
 use failure;
 use gl;
-use crate::Render;
 
 #[derive(VertexAttribPointers, Copy, Clone, Debug)]
 #[repr(C, packed)]
@@ -51,7 +51,6 @@ impl Tri1 {
         let vbo = buffer::ArrayBuffer::new(gl);
         vbo.bind();
         vbo.static_draw_data(&vertices);
-        vbo.unbind();
 
         // set up vertex array object
 
@@ -60,8 +59,6 @@ impl Tri1 {
         vao.bind();
         vbo.bind();
         Vertex::vertex_attrib_pointers(gl);
-        vbo.unbind();
-        vao.unbind();
 
         Ok(Tri1 {
             program,
@@ -97,7 +94,6 @@ impl Tri2 {
         let vbo = buffer::ArrayBuffer::new(gl);
         vbo.bind();
         vbo.static_draw_data(&vertices);
-        vbo.unbind();
 
         // set up vertex array object
 
@@ -106,8 +102,6 @@ impl Tri2 {
         vao.bind();
         vbo.bind();
         Vertex::vertex_attrib_pointers(gl);
-        vbo.unbind();
-        vao.unbind();
 
         Ok(Tri2 {
             program,
@@ -128,7 +122,6 @@ impl Render for Tri1 {
                 3,             // number of indices to be rendered
             );
         }
-        self.vao.unbind();
     }
 }
 impl Render for Tri2 {
@@ -143,6 +136,5 @@ impl Render for Tri2 {
                 3,             // number of indices to be rendered
             );
         }
-        self.vao.unbind();
     }
 }

@@ -1,3 +1,4 @@
+use image;
 use std::ffi;
 use std::fs;
 use std::io::{self, Read};
@@ -11,11 +12,21 @@ pub enum Error {
     FileContainsNil,
     #[fail(display = "Failed get executable path")]
     FailedToGetExePath,
+    #[fail(display = "Failed to load image")]
+    FailedToLoadImage(#[cause] image::ImageError),
+    #[fail(display = "Image {} is not RGBA", name)]
+    ImageIsNotRgba { name: String },
 }
 
 impl From<io::Error> for Error {
     fn from(other: io::Error) -> Self {
         Error::Io(other)
+    }
+}
+
+impl From<image::ImageError> for Error {
+    fn from(other: image::ImageError) -> Self {
+        Error::FailedToLoadImage(other)
     }
 }
 
@@ -46,11 +57,29 @@ impl Resources {
         file.read_to_end(&mut buffer)?;
 
         // check for nul byte
-        if buffer.iter().any(|i| *i == 0) {
+        if buffer.iter().find(|i| **i == 0).is_some() {
             return Err(Error::FileContainsNil);
         }
 
         Ok(unsafe { ffi::CString::from_vec_unchecked(buffer) })
+    }
+
+    pub fn load_rgb_image(&self, resource_name: &str) -> Result<image::RgbImage, Error> {
+        let img = image::open(resource_name_to_path(&self.root_path, resource_name))?;
+
+        Ok(img.to_rgb())
+    }
+
+    pub fn load_rgba_image(&self, resource_name: &str) -> Result<image::RgbaImage, Error> {
+        let img = image::open(resource_name_to_path(&self.root_path, resource_name))?;
+
+        if let image::ColorType::RGBA(_) = img.color() {
+            Ok(img.to_rgba())
+        } else {
+            Err(Error::ImageIsNotRgba {
+                name: resource_name.into(),
+            })
+        }
     }
 }
 

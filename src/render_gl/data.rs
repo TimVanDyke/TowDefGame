@@ -13,9 +13,6 @@ impl i8_ {
         i8_ { d0 }
     }
 
-    /// # Safety
-    ///
-    /// This functino does something unsfae and needs GL to be made
     pub unsafe fn vertex_attrib_pointer(
         gl: &gl::Gl,
         stride: usize,
@@ -53,9 +50,6 @@ impl i8_i8 {
         i8_i8 { d0, d1 }
     }
 
-    ///# Safety
-    /// 
-    /// This function needs a thing about safety
     pub unsafe fn vertex_attrib_pointer(
         gl: &gl::Gl,
         stride: usize,
@@ -94,10 +88,6 @@ impl i8_i8_i8 {
         i8_i8_i8 { d0, d1, d2 }
     }
 
-    
-    ///# Safety
-    /// 
-    /// This functino needs a thing about safety
     pub unsafe fn vertex_attrib_pointer(
         gl: &gl::Gl,
         stride: usize,
@@ -138,9 +128,6 @@ impl i8_i8_i8_i8 {
         i8_i8_i8_i8 { d0, d1, d2, d3 }
     }
 
-    ///# Safety
-    /// 
-    /// This functino needs a thing about safety
     pub unsafe fn vertex_attrib_pointer(
         gl: &gl::Gl,
         stride: usize,
@@ -177,9 +164,6 @@ impl i8_float {
         i8_float { d0 }
     }
 
-    /// # Safety
-    /// 
-    /// This function can't be called yet
     pub unsafe fn vertex_attrib_pointer(
         gl: &gl::Gl,
         stride: usize,
@@ -1913,6 +1897,15 @@ impl f16_f16 {
 impl From<(::half::f16, ::half::f16)> for f16_f16 {
     fn from(other: (::half::f16, ::half::f16)) -> Self {
         f16_f16::new(other.0, other.1)
+    }
+}
+
+impl From<(f32, f32)> for f16_f16 {
+    fn from(other: (f32, f32)) -> Self {
+        f16_f16::new(
+            ::half::f16::from_f32(other.0),
+            ::half::f16::from_f32(other.1),
+        )
     }
 }
 

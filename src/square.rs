@@ -1,8 +1,8 @@
 use crate::render_gl::{self, buffer, data};
 use crate::resources::Resources;
+use crate::Render;
 use failure;
 use gl;
-use crate::Render;
 
 #[derive(VertexAttribPointers, Copy, Clone, Debug)]
 #[repr(C, packed)]
@@ -47,10 +47,9 @@ impl Square {
         ];
         let indices: Vec<gl::types::GLuint> = vec![0, 1, 2, 2, 3, 0];
 
-        let vbo = buffer::ArrayBuffer::new(gl);
+        let vbo = render_gl::buffer::ArrayBuffer::new(gl);
         vbo.bind();
         vbo.static_draw_data(&vertices);
-        // vbo.unbind();
         // set up vertex array object
 
         let vao = buffer::VertexArray::new(gl);
@@ -60,14 +59,7 @@ impl Square {
         let ibo = buffer::ElementArrayBuffer::new(gl);
         ibo.bind();
         ibo.static_draw_data(&indices);
-        // ibo.unbind();
-
-        // vao.bind();
-        // vbo.bind();
         Vertex::vertex_attrib_pointers(gl);
-        vbo.unbind();
-        vao.unbind();
-        ibo.unbind();
 
         Ok(Square {
             program,
@@ -84,13 +76,7 @@ impl Render for Square {
         self.vao.bind();
 
         unsafe {
-            gl.DrawElements(
-                gl::TRIANGLES,    // mode
-                6,                // starting index in the enabled arrays
-                gl::UNSIGNED_INT, // number of indices to be rendered
-                std::ptr::null(),
-            );
+            gl.DrawElements(gl::TRIANGLES, 6, gl::UNSIGNED_INT, std::ptr::null());
         }
-        self.vao.unbind();
     }
 }

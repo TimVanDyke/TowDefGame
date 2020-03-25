@@ -1,9 +1,15 @@
 pub mod buffer;
 mod color_buffer;
 pub mod data;
+mod debug_lines;
 mod shader;
+pub mod texture;
 mod viewport;
 
-pub use self::color_buffer::ColorBuffer;
-pub use self::shader::{Error, Program, Shader};
-pub use self::viewport::Viewport;
+pub use self::{
+    color_buffer::ColorBuffer,
+    debug_lines::{DebugLines, RayMarker},
+    shader::{Error, Program, Shader},
+    texture::{Texture, TextureLoadBuilder, TextureLoadOptions},
+    viewport::Viewport,
+};

@@ -1,5 +1,6 @@
-use gl;
 use crate::resources::{self, Resources};
+use gl;
+use nalgebra as na;
 use std;
 use std::ffi::{CStr, CString};
 
@@ -11,10 +12,7 @@ pub enum Error {
         #[cause]
         inner: resources::Error,
     },
-    #[fail(
-        display = "Can not determine shader type for resource {}",
-        name
-    )]
+    #[fail(display = "Can not determine shader type for resource {}", name)]
     CanNotDetermineShaderTypeForResource { name: String },
     #[fail(display = "Failed to compile shader {}: {}", name, message)]
     CompileError { name: String, message: String },
@@ -104,6 +102,44 @@ impl Program {
     pub fn set_used(&self) {
         unsafe {
             self.gl.UseProgram(self.id);
+        }
+    }
+
+    pub fn get_uniform_location(&self, name: &str) -> Option<i32> {
+        let cname = CString::new(name).expect("expected uniform name to have no nul bytes");
+
+        let location = unsafe {
+            self.gl
+                .GetUniformLocation(self.id, cname.as_bytes_with_nul().as_ptr() as *const i8)
+        };
+
+        if location == -1 {
+            return None;
+        }
+
+        Some(location)
+    }
+
+    pub fn set_uniform_matrix_4fv(&self, location: i32, value: &na::Matrix4<f32>) {
+        unsafe {
+            self.gl.UniformMatrix4fv(
+                location,
+                1,
+                gl::FALSE,
+                value.as_slice().as_ptr() as *const f32,
+            );
+        }
+    }
+
+    pub fn set_uniform_3f(&self, location: i32, value: &na::Vector3<f32>) {
+        unsafe {
+            self.gl.Uniform3f(location, value.x, value.y, value.z);
+        }
+    }
+
+    pub fn set_uniform_1i(&self, location: i32, index: i32) {
+        unsafe {
+            self.gl.Uniform1i(location, index);
         }
     }
 }
