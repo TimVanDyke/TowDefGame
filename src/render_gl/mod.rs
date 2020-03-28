@@ -1,7 +1,7 @@
 pub mod buffer;
 mod color_buffer;
 pub mod data;
-mod debug_lines;
+pub mod debug_lines;
 mod shader;
 pub mod texture;
 mod viewport;

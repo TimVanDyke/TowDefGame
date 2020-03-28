@@ -11,11 +11,7 @@ use nalgebra as na;
 struct Vertex {
     #[location = "0"]
     pos: data::f32_f32_f32,
-    #[location = "1"]
-    clr: data::u2_u10_u10_u10_rev_float,
     #[location = "2"]
-    normal: data::f32_f32_f32,
-    #[location = "3"]
     uv: data::f16_f16,
 }
 
@@ -31,14 +27,9 @@ pub struct TexturedSquare {
     _ibo: buffer::ElementArrayBuffer,
     index_count: i32,
     vao: buffer::VertexArray,
-    _debug_rays: Vec<render_gl::RayMarker>,
 }
 impl TexturedSquare {
-    pub fn new(
-        res: &Resources,
-        gl: &gl::Gl,
-        debug_lines: &render_gl::DebugLines,
-    ) -> Result<TexturedSquare, failure::Error> {
+    pub fn new(res: &Resources, gl: &gl::Gl) -> Result<TexturedSquare, failure::Error> {
         // set up shader program
         let texture = render_gl::Texture::from_res_rgb("textures/test.png").load(gl, res)?;
         let program = render_gl::Program::from_res(gl, res, "shaders/textured/tex")?;
@@ -50,29 +41,22 @@ impl TexturedSquare {
 
         // set up vertex buffer object
         let vertices: Vec<Vertex> = vec![
+            // uv coords intentionally backwards so that it renders right
             Vertex {
                 pos: (-0.5, -0.5, 0.0).into(),
-                clr: (1.0, 0.0, 0.0, 1.0).into(),
-                normal: (0.0, 0.0, -1.0).into(),
-                uv: (0.0, 0.0).into(),
+                uv: (1.0, 1.0).into(),
             }, // bottom left
             Vertex {
                 pos: (0.5, -0.5, 0.0).into(),
-                clr: (0.0, 1.0, 0.0, 1.0).into(),
-                normal: (0.0, 0.0, -1.0).into(),
-                uv: (1.0, 0.0).into(),
+                uv: (0.0, 1.0).into(),
             }, // bottom right
             Vertex {
                 pos: (0.5, 0.5, 0.0).into(),
-                clr: (0.0, 0.0, 1.0, 1.0).into(),
-                normal: (0.0, 0.0, -1.0).into(),
-                uv: (1.0, 1.0).into(),
+                uv: (0.0, 0.0).into(),
             }, // top right
             Vertex {
                 pos: (-0.5, 0.5, 0.0).into(),
-                clr: (1.0, 1.0, 0.0, 1.0).into(),
-                normal: (0.0, 0.0, -1.0).into(),
-                uv: (0.0, 1.0).into(),
+                uv: (1.0, 0.0).into(),
             }, // top left
         ];
         let indices: Vec<gl::types::GLuint> = vec![0, 1, 2, 2, 3, 0];
@@ -91,7 +75,7 @@ impl TexturedSquare {
         vao.bind();
         vbo.bind();
         ibo.bind();
-        
+
         Vertex::vertex_attrib_pointers(gl);
 
         Ok(TexturedSquare {
@@ -106,21 +90,6 @@ impl TexturedSquare {
             _ibo: ibo,
             index_count: indices.len() as i32,
             vao,
-            _debug_rays: vertices
-                .iter()
-                .map(|v| {
-                    debug_lines.ray_marker(
-                        na::Point3::new(v.pos.d0, v.pos.d1, v.pos.d2),
-                        na::Vector3::new(v.normal.d0, v.normal.d1, v.normal.d2),
-                        na::Vector4::new(
-                            v.clr.inner.x(),
-                            v.clr.inner.y(),
-                            v.clr.inner.z(),
-                            v.clr.inner.w(),
-                        ),
-                    )
-                })
-                .collect(),
         })
     }
 }

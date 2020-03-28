@@ -81,18 +81,20 @@ fn run() -> Result<(), failure::Error> {
     });
     let mut viewport = render_gl::Viewport::for_window(win_size.0, win_size.1);
     let color_buffer = render_gl::ColorBuffer::new();
-    let mut debug_lines = render_gl::DebugLines::new(&gl, &res)?;
+    let debug_lines = render_gl::DebugLines::new(&gl, &res)?;
 
     let mut camera = camera::TargetCamera::new(
         win_size.0 as f32 / win_size.1 as f32,
-        3.14 / 2.0,
+        3.14 / 2.5,
         0.01,
         1000.0,
-        3.14 / 4.0,
         1.0,
+        5.0,
     );
 
-    let tex = textured_square::TexturedSquare::new(&res, &gl, &debug_lines)?;
+    let camera_target_marker = debug_lines.marker(camera.target, 0.25);
+
+    let tex = textured_square::TexturedSquare::new(&res, &gl)?;
 
     // let sqr = square::Square::new(&res, &gl)?;
     // let tri1 = triangle::Tri1::new(&res, &gl)?;
@@ -115,6 +117,8 @@ fn run() -> Result<(), failure::Error> {
             running = handle_events(
                 &mut event_pump,
                 &mut update_count,
+                &camera_target_marker,
+                delta,
                 &mut clock,
                 UPDATES,
                 &mut camera,
@@ -127,7 +131,7 @@ fn run() -> Result<(), failure::Error> {
                 &color_buffer,
                 &drawables,
                 &mut fps_count,
-                &mut debug_lines,
+                // &mut debug_lines,
                 &gl,
             );
             delta -= 1.0;
@@ -149,6 +153,8 @@ fn run() -> Result<(), failure::Error> {
 fn handle_events(
     pump: &mut sdl2::EventPump,
     updt_cnt: &mut i32,
+    camera_target_marker: &render_gl::debug_lines::PointMarker,
+    delta: f64,
     clk: &mut u8,
     updates: u8,
     camera: &mut camera::TargetCamera,
@@ -176,6 +182,9 @@ fn handle_events(
             }
         }
     }
+    if camera.update(delta as f32 / 100.0) {
+        camera_target_marker.update_position(camera.target);
+    }
     // tick the clock once
     *clk += 1;
     if *clk >= updates {
@@ -192,7 +201,7 @@ fn render(
     color_buffer: &render_gl::ColorBuffer,
     drawables: &Vec<&dyn RenderTex>,
     fps_cnt: &mut i32,
-    dbg_lns: &mut render_gl::DebugLines,
+    // dbg_lns: &mut render_gl::DebugLines,
     gl: &gl::Gl,
 ) {
     color_buffer.clear(&gl);
@@ -205,7 +214,7 @@ fn render(
             &camera.project_pos().coords,
         );
     }
-    let vp_matrix = camera.get_vp_matrix();
+    // let vp_matrix = camera.get_vp_matrix();
     // dbg_lns.render(&gl, &color_buffer, &vp_matrix);
     window.gl_swap_window();
     *fps_cnt += 1;
