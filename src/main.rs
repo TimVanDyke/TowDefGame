@@ -58,7 +58,7 @@ fn run() -> Result<(), failure::Error> {
     gl_attr.set_context_profile(sdl2::video::GLProfile::Core);
     gl_attr.set_context_version(4, 1);
 
-    let win_size: (i32, i32) = (900, 700);
+    let win_size: (i32, i32) = (1280, 720);
 
     let mut window = vid_sub
         .window(TITLE, win_size.0 as u32, win_size.1 as u32)

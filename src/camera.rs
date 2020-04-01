@@ -11,7 +11,7 @@ impl Camera {
         Camera {
             target: na::Point3::origin(),
             distance: initial_distance,
-            projection: na::geometry::Orthographic3::new(-45.0, 45.0, -35.0, 35.0, -1.0, 1.0),
+            projection: na::geometry::Orthographic3::new(-8.0, 8.0, -4.5, 4.5, -1.0, 1.0),
         }
     }
 
