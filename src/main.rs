@@ -3,7 +3,7 @@ extern crate failure;
 #[macro_use]
 extern crate render_gl_derive;
 
-pub mod camera;
+mod camera;
 mod debug;
 pub mod render_gl;
 pub mod resources;

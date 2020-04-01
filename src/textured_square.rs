@@ -10,7 +10,7 @@ use nalgebra as na;
 struct Vertex {
     #[location = "0"]
     pos: data::f32_f32_f32,
-    #[location = "2"]
+    #[location = "1"]
     uv: data::f16_f16,
 }
 
