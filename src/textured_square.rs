@@ -18,6 +18,7 @@ pub struct TexturedSquare {
     program: render_gl::Program,
     texture: render_gl::Texture,
     position: na::Vector3<f32>,
+    program_model_location: Option<i32>,
     program_view_location: Option<i32>,
     program_projection_location: Option<i32>,
     tex_face_location: Option<i32>,
@@ -30,8 +31,9 @@ impl TexturedSquare {
     pub fn new(res: &Resources, gl: &gl::Gl) -> Result<TexturedSquare, failure::Error> {
         // set up shader program
         let texture = render_gl::Texture::from_res_rgb("textures/test.png").load(gl, res)?;
-        let program = render_gl::Program::from_res(gl, res, "shaders/textured/tex")?;
+        let program = render_gl::Program::from_res(gl, res, "shaders/tex")?;
 
+        let program_model_location = program.get_uniform_location("Model");
         let program_view_location = program.get_uniform_location("View");
         let program_projection_location = program.get_uniform_location("Projection");
         let tex_face_location = program.get_uniform_location("TexFace");
@@ -78,10 +80,11 @@ impl TexturedSquare {
         Ok(TexturedSquare {
             program,
             texture,
+            program_model_location,
             program_view_location,
             program_projection_location,
             tex_face_location,
-            position: na::Vector3::new(0.1, 0.2, 0.3),
+            position: na::Vector3::new(5.0, 5.0, 0.0),
             _vbo: vbo,
             _ibo: ibo,
             index_count: indices.len() as i32,
@@ -95,14 +98,17 @@ impl RenderTex for TexturedSquare {
         // set shader
         self.program.set_used();
 
-        let m = na::Matrix4::from_diagonal(&na::Vector4::new(
-            self.position[0],
-            self.position[1],
-            self.position[2],
-            0.0,
-        ));
-
-        // println!("{}", m);
+        if let Some(loc) = self.program_model_location {
+            self.program.set_uniform_matrix_4fv(
+                loc,
+                &na::Matrix4::from_diagonal(&na::Vector4::new(
+                    self.position[0],
+                    self.position[1],
+                    self.position[2],
+                    0.0,
+                )),
+            );
+        }
         if let Some(loc) = self.tex_face_location {
             self.texture.bind_at(0);
             self.program.set_uniform_1i(loc, 0);

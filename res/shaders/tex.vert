@@ -14,5 +14,6 @@ out VS_OUTPUT {
 void main()
 {
     gl_Position = Projection * View * vec4(Position, 1.0);
+    // gl_Position = Model * Projection * View * vec4(Position, 1.0);
     OUT.Uv = Uv;
 }
