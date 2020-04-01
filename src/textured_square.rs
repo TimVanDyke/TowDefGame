@@ -1,6 +1,6 @@
 use crate::render_gl::{self, buffer, data};
 use crate::resources::Resources;
-use crate::RenderTex;
+use crate::Render;
 
 use failure;
 use gl;
@@ -11,7 +11,7 @@ struct Vertex {
     #[location = "0"]
     pos: data::f32_f32_f32,
     #[location = "1"]
-    uv: data::f16_f16,
+    tc: data::f16_f16,
 }
 
 pub struct TexturedSquare {
@@ -41,19 +41,19 @@ impl TexturedSquare {
             // uv coords intentionally backwards so that it renders right
             Vertex {
                 pos: (-0.5, -0.5, 0.0).into(),
-                uv: (1.0, 1.0).into(),
+                tc: (1.0, 1.0).into(),
             }, // bottom left
             Vertex {
                 pos: (0.5, -0.5, 0.0).into(),
-                uv: (0.0, 1.0).into(),
+                tc: (0.0, 1.0).into(),
             }, // bottom right
             Vertex {
                 pos: (0.5, 0.5, 0.0).into(),
-                uv: (0.0, 0.0).into(),
+                tc: (0.0, 0.0).into(),
             }, // top right
             Vertex {
                 pos: (-0.5, 0.5, 0.0).into(),
-                uv: (1.0, 0.0).into(),
+                tc: (1.0, 0.0).into(),
             }, // top left
         ];
         let indices: Vec<gl::types::GLuint> = vec![0, 1, 2, 2, 3, 0];
@@ -81,16 +81,20 @@ impl TexturedSquare {
             program_model_location,
             program_projection_location,
             tex_face_location,
-            position: na::Vector3::new(5.0, 5.0, 0.0),
+            position: na::Vector3::new(0.0, 0.0, 0.0),
             _vbo: vbo,
             _ibo: ibo,
             index_count: indices.len() as i32,
             vao,
         })
     }
+
+    fn update(&mut self) {
+        self.position[0] += 0.001;
+    }
 }
 
-impl RenderTex for TexturedSquare {
+impl Render for TexturedSquare {
     fn render(&self, gl: &gl::Gl, proj_matrix: &na::Matrix4<f32>) {
         // set shader
         self.program.set_used();
@@ -106,12 +110,12 @@ impl RenderTex for TexturedSquare {
                 .to_homogeneous(),
             );
         }
+        if let Some(loc) = self.program_projection_location {
+            self.program.set_uniform_matrix_4fv(loc, proj_matrix);
+        }
         if let Some(loc) = self.tex_face_location {
             self.texture.bind_at(0);
             self.program.set_uniform_1i(loc, 0);
-        }
-        if let Some(loc) = self.program_projection_location {
-            self.program.set_uniform_matrix_4fv(loc, proj_matrix);
         }
         self.vao.bind();
 

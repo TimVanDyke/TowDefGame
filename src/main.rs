@@ -18,10 +18,6 @@ use std::path::Path;
 use std::time::{Duration, SystemTime};
 
 trait Render {
-    fn render(&self, gl: &gl::Gl);
-}
-
-trait RenderTex {
     fn render(&self, gl: &gl::Gl, proj_matrix: &na::Matrix4<f32>);
 }
 
@@ -77,7 +73,7 @@ fn run() -> Result<(), failure::Error> {
     let tex = textured_square::TexturedSquare::new(&res, &gl)?;
 
     // let gmeobjs: Vec<&dyn Update> = vec![some_updatable_obj];
-    let drawables: Vec<&dyn RenderTex> = vec![&tex];
+    let drawables: Vec<&dyn Render> = vec![&tex];
 
     // set up shared state for window
     viewprt.set_used(&gl);
@@ -148,7 +144,7 @@ fn render(
     window: &mut sdl2::video::Window,
     cam: &camera::Camera,
     clr_bffr: &render_gl::ColorBuffer,
-    drawables: &Vec<&dyn RenderTex>,
+    drawables: &Vec<&dyn Render>,
     fps_cnt: &mut i32,
     gl: &gl::Gl,
 ) {
