@@ -19,7 +19,6 @@ pub struct TexturedSquare {
     texture: render_gl::Texture,
     position: na::Vector3<f32>,
     program_model_location: Option<i32>,
-    program_view_location: Option<i32>,
     program_projection_location: Option<i32>,
     tex_face_location: Option<i32>,
     _vbo: buffer::ArrayBuffer,
@@ -34,7 +33,6 @@ impl TexturedSquare {
         let program = render_gl::Program::from_res(gl, res, "shaders/tex")?;
 
         let program_model_location = program.get_uniform_location("Model");
-        let program_view_location = program.get_uniform_location("View");
         let program_projection_location = program.get_uniform_location("Projection");
         let tex_face_location = program.get_uniform_location("TexFace");
 
@@ -81,7 +79,6 @@ impl TexturedSquare {
             program,
             texture,
             program_model_location,
-            program_view_location,
             program_projection_location,
             tex_face_location,
             position: na::Vector3::new(5.0, 5.0, 0.0),
@@ -94,27 +91,24 @@ impl TexturedSquare {
 }
 
 impl RenderTex for TexturedSquare {
-    fn render(&self, gl: &gl::Gl, view_matrix: &na::Matrix4<f32>, proj_matrix: &na::Matrix4<f32>) {
+    fn render(&self, gl: &gl::Gl, proj_matrix: &na::Matrix4<f32>) {
         // set shader
         self.program.set_used();
 
         if let Some(loc) = self.program_model_location {
             self.program.set_uniform_matrix_4fv(
                 loc,
-                &na::Matrix4::from_diagonal(&na::Vector4::new(
+                &na::geometry::Translation3::new(
                     self.position[0],
                     self.position[1],
                     self.position[2],
-                    0.0,
-                )),
+                )
+                .to_homogeneous(),
             );
         }
         if let Some(loc) = self.tex_face_location {
             self.texture.bind_at(0);
             self.program.set_uniform_1i(loc, 0);
-        }
-        if let Some(loc) = self.program_view_location {
-            self.program.set_uniform_matrix_4fv(loc, view_matrix);
         }
         if let Some(loc) = self.program_projection_location {
             self.program.set_uniform_matrix_4fv(loc, proj_matrix);

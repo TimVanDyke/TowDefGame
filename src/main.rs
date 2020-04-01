@@ -22,7 +22,7 @@ trait Render {
 }
 
 trait RenderTex {
-    fn render(&self, gl: &gl::Gl, view_matrix: &na::Matrix4<f32>, proj_matrix: &na::Matrix4<f32>);
+    fn render(&self, gl: &gl::Gl, proj_matrix: &na::Matrix4<f32>);
 }
 
 fn main() {
@@ -72,7 +72,7 @@ fn run() -> Result<(), failure::Error> {
     let mut viewprt = render_gl::Viewport::for_window(win_size.0, win_size.1);
     let clr_bffr = render_gl::ColorBuffer::new();
 
-    let cam = camera::Camera::new(1.0, 1.0);
+    let cam = camera::Camera::new();
 
     let tex = textured_square::TexturedSquare::new(&res, &gl)?;
 
@@ -154,7 +154,7 @@ fn render(
 ) {
     clr_bffr.clear(&gl);
     for drawable in drawables.iter() {
-        drawable.render(&gl, &cam.get_view_matrix(), &cam.get_p_matrix());
+        drawable.render(&gl, &cam.get_p_matrix());
     }
     window.gl_swap_window();
     *fps_cnt += 1;

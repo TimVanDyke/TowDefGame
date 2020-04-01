@@ -13,7 +13,8 @@ out VS_OUTPUT {
 
 void main()
 {
-    gl_Position = Projection * View * vec4(Position, 1.0);
-    // gl_Position = Model * Projection * View * vec4(Position, 1.0);
+    // gl_Position = Projection * View * vec4(Position, 1.0);
+    gl_Position = Projection * vec4(Position, 1.0);
+    // gl_Position = Projection * View * vec4(Position, 1.0) * Model;
     OUT.Uv = Uv;
 }
