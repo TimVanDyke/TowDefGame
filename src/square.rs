@@ -20,7 +20,7 @@ pub struct Square {
     vao: buffer::VertexArray,
 }
 impl Square {
-    pub fn new(res: &Resources, gl: &gl::Gl) -> Result<Square, failure::Error> {
+    pub fn _new(res: &Resources, gl: &gl::Gl) -> Result<Square, failure::Error> {
         // set up shader program
 
         let program = render_gl::Program::from_res(gl, res, "shaders/tri")?;

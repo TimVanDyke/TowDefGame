@@ -26,7 +26,7 @@ pub struct Tri2 {
 }
 
 impl Tri1 {
-    pub fn new(res: &Resources, gl: &gl::Gl) -> Result<Tri1, failure::Error> {
+    pub fn _new(res: &Resources, gl: &gl::Gl) -> Result<Tri1, failure::Error> {
         // set up shader program
 
         let program = render_gl::Program::from_res(gl, res, "shaders/tri")?;
@@ -69,7 +69,7 @@ impl Tri1 {
 }
 
 impl Tri2 {
-    pub fn new(res: &Resources, gl: &gl::Gl) -> Result<Tri2, failure::Error> {
+    pub fn _new(res: &Resources, gl: &gl::Gl) -> Result<Tri2, failure::Error> {
         // set up shader program
 
         let program = render_gl::Program::from_res(gl, res, "shaders/tri")?;

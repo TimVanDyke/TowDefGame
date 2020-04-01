@@ -4,7 +4,6 @@ use crate::RenderTex;
 
 use failure;
 use gl;
-use na::Matrix3;
 use nalgebra as na;
 #[derive(VertexAttribPointers, Copy, Clone, Debug)]
 #[repr(C, packed)]
@@ -18,10 +17,9 @@ struct Vertex {
 pub struct TexturedSquare {
     program: render_gl::Program,
     texture: render_gl::Texture,
-    position: Matrix3<f32>,
+    position: na::Vector3<f32>,
     program_view_location: Option<i32>,
     program_projection_location: Option<i32>,
-    camera_pos_location: Option<i32>,
     tex_face_location: Option<i32>,
     _vbo: buffer::ArrayBuffer,
     _ibo: buffer::ElementArrayBuffer,
@@ -36,7 +34,6 @@ impl TexturedSquare {
 
         let program_view_location = program.get_uniform_location("View");
         let program_projection_location = program.get_uniform_location("Projection");
-        let camera_pos_location = program.get_uniform_location("CameraPos");
         let tex_face_location = program.get_uniform_location("TexFace");
 
         // set up vertex buffer object
@@ -83,9 +80,8 @@ impl TexturedSquare {
             texture,
             program_view_location,
             program_projection_location,
-            camera_pos_location,
             tex_face_location,
-            position: Matrix3::identity(),
+            position: na::Vector3::new(0.1, 0.2, 0.3),
             _vbo: vbo,
             _ibo: ibo,
             index_count: indices.len() as i32,
@@ -95,16 +91,18 @@ impl TexturedSquare {
 }
 
 impl RenderTex for TexturedSquare {
-    fn render(
-        &self,
-        gl: &gl::Gl,
-        view_matrix: &na::Matrix4<f32>,
-        proj_matrix: &na::Matrix4<f32>,
-        camera_pos: &na::Vector3<f32>,
-    ) {
+    fn render(&self, gl: &gl::Gl, view_matrix: &na::Matrix4<f32>, proj_matrix: &na::Matrix4<f32>) {
         // set shader
         self.program.set_used();
 
+        let m = na::Matrix4::from_diagonal(&na::Vector4::new(
+            self.position[0],
+            self.position[1],
+            self.position[2],
+            0.0,
+        ));
+
+        // println!("{}", m);
         if let Some(loc) = self.tex_face_location {
             self.texture.bind_at(0);
             self.program.set_uniform_1i(loc, 0);
@@ -114,9 +112,6 @@ impl RenderTex for TexturedSquare {
         }
         if let Some(loc) = self.program_projection_location {
             self.program.set_uniform_matrix_4fv(loc, proj_matrix);
-        }
-        if let Some(loc) = self.camera_pos_location {
-            self.program.set_uniform_3f(loc, camera_pos);
         }
         self.vao.bind();
 

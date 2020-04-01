@@ -3,7 +3,7 @@
 layout (location = 0) in vec3 Position;
 layout (location = 2) in vec2 Uv;
 
-//uniform vec3 CameraPos;
+uniform mat4 Model;
 uniform mat4 View;
 uniform mat4 Projection;
 
