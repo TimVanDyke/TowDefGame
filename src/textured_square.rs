@@ -1,6 +1,7 @@
 use crate::render_gl::{self, buffer, data};
 use crate::resources::Resources;
 use crate::Render;
+use crate::Update;
 
 use failure;
 use gl;
@@ -90,10 +91,17 @@ impl TexturedSquare {
     }
 
     fn update(&mut self) {
-        self.position[0] += 0.001;
+        self.position[0] += 0.01;
+        self.position[1] += 0.01;
     }
 }
 
+impl Update for TexturedSquare {
+    fn update(&mut self) {
+        self.update();
+        println!("{}", self.position);
+    }
+}
 impl Render for TexturedSquare {
     fn render(&self, gl: &gl::Gl, proj_matrix: &na::Matrix4<f32>) {
         // set shader

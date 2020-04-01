@@ -17,6 +17,9 @@ use sdl2::keyboard::Keycode;
 use std::path::Path;
 use std::time::{Duration, SystemTime};
 
+trait Update {
+    fn update(&mut self);
+}
 trait Render {
     fn render(&self, gl: &gl::Gl, proj_matrix: &na::Matrix4<f32>);
 }
@@ -70,10 +73,10 @@ fn run() -> Result<(), failure::Error> {
 
     let cam = camera::Camera::new();
 
-    let tex = textured_square::TexturedSquare::new(&res, &gl)?;
+    let mut tex = textured_square::TexturedSquare::new(&res, &gl)?;
 
-    // let gmeobjs: Vec<&dyn Update> = vec![some_updatable_obj];
-    let drawables: Vec<&dyn Render> = vec![&tex];
+    // let mut gameobjs: Vec<&mut dyn Update> = vec![&mut tex];
+    // let drawables: Vec<&dyn Render> = vec![&tex];
 
     // set up shared state for window
     viewprt.set_used(&gl);
@@ -87,7 +90,9 @@ fn run() -> Result<(), failure::Error> {
         lst_time = time_now;
         // capping updates to "UPDATES"
         while delta > 1.0 {
+            tex.update();
             running = handle_events(
+                // &mut gameobjs,
                 &mut pump,
                 &mut updt_cnt,
                 &mut clk,
@@ -95,7 +100,8 @@ fn run() -> Result<(), failure::Error> {
                 &mut viewprt,
                 &gl,
             );
-            render(&mut window, &cam, &clr_bffr, &drawables, &mut fps_cnt, &gl);
+            // render(&mut window, &cam, &clr_bffr, &drawables, &mut fps_cnt, &gl);
+            render(&mut window, &cam, &clr_bffr, &tex, &mut fps_cnt, &gl);
             delta -= 1.0;
         } // uncapping updates and fps is below:
         build_title_update_fps(&mut timer, &mut window, TITLE, &mut updt_cnt, &mut fps_cnt);
@@ -105,6 +111,7 @@ fn run() -> Result<(), failure::Error> {
 
 /// handles user input and events, then updates the world based on those things
 fn handle_events(
+    // gameobjs: &mut Vec<&mut dyn Update>,
     pump: &mut sdl2::EventPump,
     updt_cnt: &mut i32,
     clk: &mut u8,
@@ -130,6 +137,9 @@ fn handle_events(
             _ => {}
         }
     }
+    // for gameobj in gameobjs.iter() {
+    //     gameobj.update();
+    // }
     // tick the clock once
     *clk += 1;
     if *clk >= updates {
@@ -144,17 +154,34 @@ fn render(
     window: &mut sdl2::video::Window,
     cam: &camera::Camera,
     clr_bffr: &render_gl::ColorBuffer,
-    drawables: &Vec<&dyn Render>,
+    tex: &textured_square::TexturedSquare,
     fps_cnt: &mut i32,
     gl: &gl::Gl,
 ) {
     clr_bffr.clear(&gl);
-    for drawable in drawables.iter() {
-        drawable.render(&gl, &cam.get_p_matrix());
-    }
+    // for drawable in drawables.iter() {
+    //     drawable.render(&gl, &cam.get_p_matrix());
+    // }
+    tex.render(&gl, &cam.get_p_matrix());
     window.gl_swap_window();
     *fps_cnt += 1;
 }
+
+// fn render(
+//     window: &mut sdl2::video::Window,
+//     cam: &camera::Camera,
+//     clr_bffr: &render_gl::ColorBuffer,
+//     drawables: &Vec<&dyn Render>,
+//     fps_cnt: &mut i32,
+//     gl: &gl::Gl,
+// ) {
+//     clr_bffr.clear(&gl);
+//     for drawable in drawables.iter() {
+//         drawable.render(&gl, &cam.get_p_matrix());
+//     }
+//     window.gl_swap_window();
+//     *fps_cnt += 1;
+// }
 
 /// A helper method to build the title for the window so that it doesn't look like garbage in my loop
 fn build_title_update_fps(
