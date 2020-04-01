@@ -7,9 +7,7 @@ pub mod camera;
 mod debug;
 pub mod render_gl;
 pub mod resources;
-mod square;
 mod textured_square;
-mod triangle;
 
 use crate::resources::Resources;
 use failure::err_msg;
@@ -74,7 +72,7 @@ fn run() -> Result<(), failure::Error> {
     let mut viewprt = render_gl::Viewport::for_window(win_size.0, win_size.1);
     let clr_bffr = render_gl::ColorBuffer::new();
 
-    let cam = camera::TargetCamera::new(1.0, 1.0);
+    let cam = camera::Camera::new(1.0, 1.0);
 
     let tex = textured_square::TexturedSquare::new(&res, &gl)?;
 
@@ -148,7 +146,7 @@ fn handle_events(
 /// renders the world to handle what happened in handle_events
 fn render(
     window: &mut sdl2::video::Window,
-    cam: &camera::TargetCamera,
+    cam: &camera::Camera,
     clr_bffr: &render_gl::ColorBuffer,
     drawables: &Vec<&dyn RenderTex>,
     fps_cnt: &mut i32,
